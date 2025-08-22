@@ -57,103 +57,98 @@ function App() {
     checkLoginStatus();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
-    <>
-      <Router>
-        <Navbar
-          setIsLoggedIn={setIsLoggedIn}
-          isAdminLoggedIn={isAdminLoggedIn}
-          isLoggedIn={isLoggedIn}
-          setIsAdminLoggedIn={setIsAdminLoggedIn}
+    <Router>
+      <Navbar
+        setIsLoggedIn={setIsLoggedIn}
+        isAdminLoggedIn={isAdminLoggedIn}
+        isLoggedIn={isLoggedIn}
+        setIsAdminLoggedIn={setIsAdminLoggedIn}
+      />
+      <Routes>
+        {/* User Authentication Routes */}
+        <Route
+          path="/signup"
+          element={
+            !isLoggedIn ? (
+              <Signup
+                setIsLoggedIn={setIsLoggedIn}
+                setIsAdminLoggedIn={setIsAdminLoggedIn}
+              />
+            ) : (
+              <Navigate to="/home" />
+            )
+          }
         />
-        <Routes>
-          {/* User Authentication Routes */}
-          <Route
-            path="/signup"
-            element={
-              !isLoggedIn ? (
-                <Signup
-                  setIsLoggedIn={setIsLoggedIn}
-                  setIsAdminLoggedIn={setIsAdminLoggedIn}
-                />
-              ) : (
-                <Navigate to="/home" />
-              )
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              !isLoggedIn ? (
-                <Login
-                  setIsLoggedIn={setIsLoggedIn}
-                  setIsAdminLoggedIn={setIsAdminLoggedIn}
-                />
-              ) : (
-                <Navigate to="/home" />
-              )
-            }
-          />
-          <Route
-            path="/profile"
-            element={<Profile setIsLoggedIn={setIsLoggedIn} />}
-          />
+        <Route
+          path="/login"
+          element={
+            !isLoggedIn ? (
+              <Login
+                setIsLoggedIn={setIsLoggedIn}
+                setIsAdminLoggedIn={setIsAdminLoggedIn}
+              />
+            ) : (
+              <Navigate to="/home" />
+            )
+          }
+        />
+        <Route
+          path="/profile"
+          element={<Profile setIsLoggedIn={setIsLoggedIn} />}
+        />
 
-          {/* Admin Authentication Route */}
-          <Route
-            path="/admin/login"
-            element={
-              !isAdminLoggedIn ? (
-                <AdminLogin setIsAdminLoggedIn={setIsAdminLoggedIn} />
-              ) : (
-                <Navigate to="/admin/dashboard" />
-              )
-            }
-          />
+        {/* Admin Authentication Route */}
+        <Route
+          path="/admin/login"
+          element={
+            !isAdminLoggedIn ? (
+              <AdminLogin setIsAdminLoggedIn={setIsAdminLoggedIn} />
+            ) : (
+              <Navigate to="/admin/dashboard" />
+            )
+          }
+        />
 
-          {/* Admin Protected Routes */}
-          <Route
-            path="/admin/dashboard"
-            element={
-              isAdminLoggedIn ? (
-                <AdminDashBoard />
-              ) : (
-                <Navigate to="/admin/login" />
-              )
-            }
-          />
-          <Route
-            path="/admin/product/:id/edit"
-            element={
-              isAdminLoggedIn ? <EditProduct /> : <Navigate to="/admin/login" />
-            }
-          />
-          <Route
-            path="/admin/create/product"
-            element={
-              isAdminLoggedIn ? (
-                <CreateProduct />
-              ) : (
-                <Navigate to="/admin/login" />
-              )
-            }
-          />
+        {/* Admin Protected Routes */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            isAdminLoggedIn ? (
+              <AdminDashBoard />
+            ) : (
+              <Navigate to="/admin/login" />
+            )
+          }
+        />
+        <Route
+          path="/admin/product/:id/edit"
+          element={
+            isAdminLoggedIn ? <EditProduct /> : <Navigate to="/admin/login" />
+          }
+        />
+        <Route
+          path="/admin/create/product"
+          element={
+            isAdminLoggedIn ? <CreateProduct /> : <Navigate to="/admin/login" />
+          }
+        />
 
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/product/:id" element={<ProductDetails />} />
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/product/:id" element={<ProductDetails />} />
 
-          {/* Default Route */}
-          {/* <Route
+        {/* Default Route */}
+        {/* <Route
             path="*"
             element={
               isLoggedIn
@@ -163,10 +158,9 @@ function App() {
                 : <Navigate to="/login" />
             }
           /> */}
-        </Routes>
-        <Footer />
-      </Router>
-    </>
+      </Routes>
+      <Footer />
+    </Router>
   );
 }
 
