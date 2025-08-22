@@ -500,9 +500,9 @@ export function Profile() {
                 <p>
                   <strong>Email:</strong> {userData.email}
                 </p>
-                <p>
+                {/* <p>
                   <strong>User ID:</strong> {userData.id}
-                </p>
+                </p> */}
               </>
             ) : (
               <p>No user data available. Please log in.</p>
@@ -565,7 +565,7 @@ export function Profile() {
                     )}
                     <div className="cart-item-details">
                       <h3>{item.productDetails ? item.productDetails.name : 'Product Not Found'}</h3>
-                      <p>Price: ${item.productDetails ? item.productDetails.prize : 'N/A'}</p>
+                      <p>Price: {item.productDetails ? item.productDetails.prize * item.quantity : 'N/A'}</p>
                       <div className="cart-item-quantity-controls">
                         <button onClick={() => handleQuantityChange(item.id, item.quantity - 1)}>-</button>
                         <input

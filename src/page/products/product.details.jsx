@@ -18,6 +18,34 @@ export function ProductDetails() {
       });
   }, [id]);
 
+  useEffect(() => {
+    const readCart = async () => {
+      const token = localStorage.getItem("auth_token");
+      if (token && product) {
+        fetch(`${DOMAIN_URL}user_profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }).then((res) => {
+          return res.json();
+        }).then((data) => {
+          fetch(`${DOMAIN_URL}cart/${data.id}`);
+        } );
+      }
+    };
+    readCart();
+  }, [product]);
+
+  useEffect(() => {
+    if (product && product.benefit){
+      const benefits = product.benefit.split(",");
+      product.benefit = benefits.map((benefit, index) => (
+        <li key={index}>{benefit.trim()}</li>
+      ));
+    }
+  }, [product])
+
   if (!product) {
     return (
       <div className="product-details">
@@ -27,7 +55,7 @@ export function ProductDetails() {
   }
 
   const handleOrder = async () => {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem("auth_token");
     const response = await fetch(`${DOMAIN_URL}user_profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -37,7 +65,7 @@ export function ProductDetails() {
     if (!response.ok) {
       alert("Login to add to cart");
       return;
-    };
+    }
     const data = await response.json();
     const orderData = {
       productId: product.id,
@@ -73,7 +101,14 @@ export function ProductDetails() {
     <div className="product-details">
       <div className="product-main">
         <div className="product-image">
-          {product.images && <img src={`${DOMAIN_URL}${product.images}`} alt={product.name} width={"250px"} height={"250px"}/>}
+          {product.images && (
+            <img
+              src={`${DOMAIN_URL}${product.images}`}
+              alt={product.name}
+              width={"250px"}
+              height={"250px"}
+            />
+          )}
         </div>
         <div className="product-info">
           <h2>{product.name}</h2>
@@ -91,9 +126,7 @@ export function ProductDetails() {
       <div className="product-benefits-vision">
         <div className="product-benefits">
           <h3>Benefits</h3>
-          <ul>
-            {product.benefit && <p>{product.benefit}</p>}
-          </ul>
+          <ul>{product.benefit && <p>{product.benefit}</p>}</ul>
         </div>
       </div>
     </div>
