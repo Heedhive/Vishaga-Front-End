@@ -1,0 +1,139 @@
+.hero-content {
+  display: flex;
+  align-items: center;
+  padding: 80px 40px;
+  background-image: url(../assest/home_cover.png);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.hero-text {
+  flex: 1;
+}
+
+.hero-text h1 {
+  font-size: 2.2rem;
+  color: #223322;
+  margin-bottom: 20px;
+}
+
+.hero-text Link {
+  background-color: #2f562f;
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.hero-text Link:hover {
+  background-color: #244424;
+}
+
+
+.hero-title {
+  font-size: 2.5rem;
+  color: var(--green-color);
+}
+
+.hero-button {
+  background-color: #0f400d;
+  color: #fff;
+  padding: 12px 24px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+/* Mission and Vision */
+.mission-vision {
+  display: flex;
+  justify-content: space-around;
+  padding: 40px 20px;
+  background-color: #f9eedb;
+}
+
+.mission-vision div {
+  max-width: 300px;
+  text-align: center;
+}
+
+.mission-vision h2 {
+  color: #223322;
+  margin-bottom: 10px;
+  font-family: 'Playfair Display', serif; /* Elegant font */
+  font-size: 2.2em; /* Slightly larger font size */
+  font-weight: bold;
+  text-transform: uppercase; /* Make it uppercase */
+  letter-spacing: 1.5px; /* Add some letter spacing */
+}
+
+/* Featured Products */
+.featured-products {
+  background-color: var(--sandal);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 40px 20px;
+}
+
+.home-products-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.product-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 6px;
+  width: 250px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-8px); /* Lift effect on hover */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.product-card img {
+  width: 100%;
+  border-radius: 6px;
+}
+
+.product-card h3 {
+  margin-top: 10px;
+  color: #223322;
+}
+
+
+@media (max-width: 768px) {
+  .mission-vision {
+    align-items: center;
+    flex-direction: column;
+  }  
+  .hero-content{
+    padding: 40px 20px;
+    background-size: 120%;
+  }
+  .home-featured-products {
+    flex-direction: column;
+
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-content{
+    padding: 40px 20px;
+    background-size: 150%;
+  }
+}

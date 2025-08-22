@@ -1,0 +1,117 @@
+.testimonial-wrapper {
+  background-color: #f0d7aa;
+  padding: 50px 20px;
+  font-family: Georgia, serif;
+  color: #554422;
+}
+
+/* Titles */
+.testimonial-title {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.feedback-title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+}
+
+/* Feedback cards */
+.feedback-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.feedback-card {
+  background-color: #d4ad69;
+  padding: 20px;
+  width: 250px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.feedback-image {
+  width: 100%;
+  height: 120px;
+  background-color: #c29d5d;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+/* Contact form */
+.contact-container {
+  background-color: #a57f46;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 500px;
+  margin: 0 auto 50px;
+  color: #fefefe;
+}
+
+.contact-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.contact-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.contact-container input,
+.contact-container textarea {
+  padding: 12px 0;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.contact-container button {
+  padding: 12px;
+  background-color: #554422;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.contact-container button:hover {
+  background-color: #776044;
+}
+
+/* Footer links */
+.footer-links {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  border-top: 1px solid #c2a071;
+  padding-top: 20px;
+}
+
+.links-left h3 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.links-right ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  gap: 20px;
+}
+
+.links-right a {
+  text-decoration: none;
+  color: #554422;
+}
+
+.links-right a:hover {
+  text-decoration: underline;
+}
