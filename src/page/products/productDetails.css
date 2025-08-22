@@ -1,0 +1,110 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Georgia, serif;
+}
+
+.product-details {
+  background-color: #f0d7aa;
+  padding: 20px;
+  color: #2f3e2f;
+}
+
+.product-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #2f3e2f;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+}
+
+.product-header nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: #2f3e2f;
+  font-weight: bold;
+}
+
+.product-main {
+  display: flex;
+  gap: 30px;
+  border: 1px solid #2f3e2f;
+  padding: 20px;
+  background-color: #f0d7aa;
+}
+
+.product-image {
+  min-width: 30%;
+}
+.product-image img {
+  width: 250px;
+  border-radius: 10px;
+}
+
+.product-info {
+  flex: 1;
+}
+
+.product-info h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.product-info p {
+  margin-bottom: 20px;
+}
+
+.product-info button {
+  background-color: #295142;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.product-description {
+  border: 1px solid #2f3e2f;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.product-benefits-vision {
+  display: flex;
+  border: 1px solid #2f3e2f;
+  margin-top: 20px;
+}
+
+.product-benefits,
+.product-vision {
+  flex: 1;
+  padding: 20px;
+  border-right: 1px solid #2f3e2f;
+}
+
+.product-benefits:last-child,
+.product-vision:last-child {
+  border-right: none;
+}
+
+.product-benefits ul {
+  padding-left: 20px;
+}
+
+.product-benefits li {
+  margin-bottom: 8px;
+}
+
+
+@media (max-width: 768px) {
+  .product-main {
+    display: flex;
+    flex-direction: column;
+  }
+  .product-info {
+    margin-top: 20px;
+    padding-left: 0;
+  }
+}
