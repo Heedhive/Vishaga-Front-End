@@ -6,6 +6,7 @@ import "./productDetails.css";
 export function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [benefits,setBenefits] = useState([]);
 
   useEffect(() => {
     fetch(`${DOMAIN_URL}products/${id}`)
@@ -40,9 +41,10 @@ export function ProductDetails() {
   useEffect(() => {
     if (product && product.benefit){
       const benefits = product.benefit.split(",");
-      product.benefit = benefits.map((benefit, index) => (
-        <li key={index}>{benefit.trim()}</li>
-      ));
+      if (benefits.length > 0){
+        setBenefits(benefits);
+      }
+      
     }
   }, [product])
 
@@ -126,7 +128,9 @@ export function ProductDetails() {
       <div className="product-benefits-vision">
         <div className="product-benefits">
           <h3>Benefits</h3>
-          <ul>{product.benefit && <p>{product.benefit}</p>}</ul>
+          <ul>{benefits.map((benefit, inx) => (
+            <li key={inx}>{benefit.trim()}</li>
+          ))}</ul>
         </div>
       </div>
     </div>
