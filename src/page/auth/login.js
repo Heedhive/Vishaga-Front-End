@@ -56,7 +56,7 @@ export function Login({ setIsLoggedIn }) {
         />
         {error && <p className="error">{error}</p>}
         <button className="auth-button" onClick={handleLogin}>Login</button>
-        <p className="auth-link">Don't have an account? <a href="/signup">Sign up</a></p>
+        <p className="auth-link">Don't have an account? <b><a href="/signup">Sign up</a></b></p>
       </div>
     </div>
   );

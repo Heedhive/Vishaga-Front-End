@@ -73,12 +73,12 @@ export function ProductDetails() {
     <div className="product-details">
       <div className="product-main">
         <div className="product-image">
-          {product.images && <img src={`${DOMAIN_URL}${product.images}`} alt={product.name} width={"40px"} />}
+          {product.images && <img src={`${DOMAIN_URL}${product.images}`} alt={product.name} width={"250px"} height={"250px"}/>}
         </div>
         <div className="product-info">
           <h2>{product.name}</h2>
           <p>{product.line_description}</p>
-          <p>prize - {product.prize}</p>
+          <p>prize - {product.prize} rs /kg</p>
           <button onClick={handleOrder}>Add to cart</button>
         </div>
       </div>

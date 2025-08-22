@@ -35,10 +35,10 @@ body {
 }
 
 .product-image {
-  min-width: 30%;
+  height: 250px;
 }
+
 .product-image img {
-  width: 250px;
   border-radius: 10px;
 }
 
@@ -102,9 +102,9 @@ body {
   .product-main {
     display: flex;
     flex-direction: column;
+    gap: 0;
   }
   .product-info {
-    margin-top: 20px;
     padding-left: 0;
   }
 }

@@ -2,7 +2,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import "./navbar.css";
 import { DOMAIN_URL } from "../../constant";
-import logo from "../../page/assest/logo.jpeg";
+import logo from "../../page/assest/logo.png";
 
 export default function Navbar({
   setIsLoggedIn,
@@ -45,7 +45,7 @@ export default function Navbar({
             width="80"
             height="80"
           />
-          <span>Handmade Rice Co.</span>
+          <span>Vishaga Foods</span>
         </div>
 
         {/* Hamburger Icon */}

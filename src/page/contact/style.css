@@ -31,13 +31,14 @@
   background-color: #d4ad69;
   padding: 20px;
   width: 250px;
+  height: 250px;
   text-align: center;
   border-radius: 10px;
 }
 
 .feedback-image {
   width: 100%;
-  height: 120px;
+  height: 180px;
   background-color: #c29d5d;
   border-radius: 6px;
   margin-bottom: 15px;
@@ -66,10 +67,11 @@
 
 .contact-container input,
 .contact-container textarea {
-  padding: 12px 0;
+  padding: 12px 5px;
   border: none;
   border-radius: 6px;
   font-size: 1rem;
+  box-sizing: border-box;
 }
 
 .contact-container button {
