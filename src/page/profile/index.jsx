@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import "./style.css";
 import { DOMAIN_URL } from "../../constant";
 
@@ -8,7 +8,6 @@ export function Profile() {
   const [userData, setUserData] = useState(null);
   const [cartItems, setCartItems] = useState([]); // Renamed from cartData to cartItems for clarity
   const [orderHistoryItems, setOrderHistoryItems] = useState([]); // New state for order history
-  const [activeTab, setActiveTab] = useState("info");
   const [loading, setLoading] = useState(true);
   const [editUsername, setEditUsername] = useState('');
   const [editEmail, setEditEmail] = useState('');
@@ -19,7 +18,15 @@ export function Profile() {
   const [cartError, setCartError] = useState(null); // New error state for cart
   const [orderHistoryLoading, setOrderHistoryLoading] = useState(false); // New loading state for order history
   const [orderHistoryError, setOrderHistoryError] = useState(null); // New error state for order history
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabFromURL = searchParams.get("tab") || "info";
+  const [activeTab, setActiveTab] = useState(tabFromURL);
 
+  useEffect(() => {
+    setSearchParams({ tab: activeTab });
+  }, [activeTab]);
+
+  
   // Function to fetch cart data - moved outside useEffect for reusability
   const fetchCartData = async () => {
     if (!userData || !userData.id) return; // Ensure userData is available

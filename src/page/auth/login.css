@@ -21,6 +21,10 @@ body {
   text-align: center;
 }
 
+.auth-card input {
+  margin-bottom: 10px;
+}
+
 .auth-title {
   color: #3e3e2e;
   font-size: 28px;

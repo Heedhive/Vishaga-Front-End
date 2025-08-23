@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { DOMAIN_URL } from "../../constant";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import "./productDetails.css";
 
 export function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [benefits,setBenefits] = useState([]);
+  const [cart, setCart] = useState(null);
 
   useEffect(() => {
     fetch(`${DOMAIN_URL}products/${id}`)
@@ -31,8 +32,26 @@ export function ProductDetails() {
         }).then((res) => {
           return res.json();
         }).then((data) => {
-          fetch(`${DOMAIN_URL}cart/${data.id}`);
-        } );
+          if (data.id){
+            fetch(`${DOMAIN_URL}cart/${data.id}`).then((res) => {
+              return res.json();
+            }
+            ).then((cartData) => {
+              if (cartData && cartData.length > 0){
+                const productInCart = cartData.find(item => item.productId === product.id);
+                if (productInCart) {
+                  setCart(productInCart);
+                } else {
+                  setCart(null);
+                }
+              } else {
+                setCart(null);
+              }
+            }).catch((error) => {
+              console.error("Error fetching cart:", error);
+            });
+          } 
+        });
       }
     };
     readCart();
@@ -116,7 +135,11 @@ export function ProductDetails() {
           <h2>{product.name}</h2>
           <p>{product.line_description}</p>
           <p>prize - {product.prize} rs /kg</p>
-          <button onClick={handleOrder}>Add to cart</button>
+          {cart ? (
+            <Link to={"/profile?tab=cart"}><button>Go to Cart</button></Link>
+          ) : (
+            <p><button onClick={handleOrder} >Add to Cart</button></p>
+          )}
         </div>
       </div>
 
