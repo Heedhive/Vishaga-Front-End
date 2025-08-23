@@ -16,8 +16,8 @@ export default function EditProduct() {
 
   useEffect(() => {
     fetch(`${DOMAIN_URL}products/${id}`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setFormData({
           name: data.name,
           prize: data.prize,
@@ -30,11 +30,11 @@ export default function EditProduct() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e) => {
-    setFormData(prev => ({ ...prev, images: Array.from(e.target.files) }));
+    setFormData((prev) => ({ ...prev, images: Array.from(e.target.files) }));
   };
 
   const handleSubmit = async (e) => {
@@ -61,33 +61,65 @@ export default function EditProduct() {
       <h2>Edit Product</h2>
 
       <div>
-        <label>Name:</label><br />
-        <input name="name" value={formData.name} onChange={handleChange} required />
+        <label>Name:</label>
+        <br />
+        <input
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
       </div>
 
       <div>
-        <label>Prize:</label><br />
-        <input type="number" name="prize" value={formData.prize} onChange={handleChange} required />
+        <label>Prize:</label>
+        <br />
+        <input
+          type="number"
+          name="prize"
+          value={formData.prize}
+          onChange={handleChange}
+          required
+        />
       </div>
 
       <div>
-        <label>Details:</label><br />
-        <textarea name="details" value={formData.details} onChange={handleChange} required />
+        <label>Details:</label>
+        <br />
+        <textarea
+          name="details"
+          style={{
+            width: "100%",
+            height: "100px",
+            borderRadius: "5px",
+          }}
+          value={formData.details}
+          onChange={handleChange}
+          required
+        />
       </div>
 
       <div>
-        <label>Current Images:</label><br />
+        <label>Current Images:</label>
+        <br />
         {existingImages.map((img, i) => (
           <img key={i} src={`${DOMAIN_URL}${img}`} width="100" alt="Old" />
         ))}
       </div>
 
       <div>
-        <label>Replace Images:</label><br />
-        <input type="file" multiple accept="image/*" onChange={handleImageChange} />
+        <label>Replace Images:</label>
+        <br />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+        />
       </div>
 
-      <button type="submit" style={{ marginTop: "10px" }}>Update</button>
+      <button type="submit" style={{ marginTop: "10px" }}>
+        Update
+      </button>
     </form>
   );
 }

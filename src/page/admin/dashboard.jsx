@@ -121,7 +121,7 @@ export function AdminDashBoard() {
                         src={`${DOMAIN_URL}${img}`}
                         alt={product.name}
                         key={idx}
-                        className="product-image"
+                        className="admin-product-image"
                       />
                     ))
                   ) : (

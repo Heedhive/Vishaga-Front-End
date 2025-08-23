@@ -10,6 +10,7 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  background-color: #f3ddba;
 }
 
 .signup-card,
@@ -37,12 +38,13 @@ body {
 .signup-card input,
 .login-card input {
   width: 100%;
-  padding: 12px 0px;
+  padding: 12px 10px;
   margin: 10px 0;
   border: 1px solid #c2b280;
   border-radius: 8px;
   font-size: 14px;
   background-color: #fffef9;
+  box-sizing: border-box;
 }
 
 .signup-card button,

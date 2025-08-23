@@ -73,16 +73,11 @@
   background-color: #f1f1f1;
 }
 
-.product-image {
-  width: 80px;
-  height: 80px;
+.admin-product-image {
+  width: 200px;
+  height: 200px;
   object-fit: cover;
   border-radius: 4px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 8px;
 }
 
 .edit-button, .delete-button {

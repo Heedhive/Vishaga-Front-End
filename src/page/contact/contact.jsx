@@ -28,11 +28,11 @@ export function Contact() {
 
       <div className="feedback-container">
         <div className="feedback-card">
-          <div className="feedback-image" ><img src={rice1} width={"250px"} height={"120px"} alt="pic"/></div>
+          <div className="feedback-image" ><img src={rice1} width={"250px"} height={"180px"} alt="pic"/></div>
           <p>As usual better price and product quality is good</p>
         </div>
         <div className="feedback-card">
-          <div className="feedback-image"><img src={rice2} width={"250px"} height={"120px"} alt="pic"/></div>
+          <div className="feedback-image"><img src={rice2} width={"250px"} height={"180px"} alt="pic"/></div>
           <p>Too good aroma and tast love it ,</p>
         </div>
       </div>

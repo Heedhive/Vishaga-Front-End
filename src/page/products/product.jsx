@@ -30,7 +30,7 @@ export function Products() {
             {product.images && product.images[0] && <img src={`${DOMAIN_URL}${product.images[0]}`} alt={product.name} />}
             <div className="product-info">
               <h3>{product.name}</h3>
-              <h3>{product.prize}</h3>
+              <h3>{product.prize} rs / kg</h3>
               <p>{product.details}</p>
               <ul>
                 {/* {product.benefits.map((benefit, idx) => (

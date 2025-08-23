@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { DOMAIN_URL } from "../../constant";
 
+import "./create.product.css"; // Import the CSS file for styling
+
 export default function CreateProduct() {
   const [formData, setFormData] = useState({
     name: "",
@@ -52,86 +54,95 @@ export default function CreateProduct() {
       console.error("Upload failed", err);
     }
 
-    setFormData({ name: "", prize: "", details: "", images: [], lineDescription: "", benefit: "" });
+    setFormData({
+      name: "",
+      prize: "",
+      details: "",
+      images: [],
+      lineDescription: "",
+      benefit: "",
+    });
   };
 
   return (
-    <>
-      <Link to={"/admin/dashboard"}>Back</Link>
-      <form
-        onSubmit={handleSubmit}
-        style={{ maxWidth: "400px", margin: "auto" }}
-      >
-        <div>
-          <label>Name:</label>
-          <br />
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Single line description:</label>
-          <br />
-          <input
-            type="text"
-            name="lineDescription"
-            value={formData.lineDescription}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Details:</label>
-          <br />
-          <textarea
-            name="details"
-            value={formData.details}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Prize:</label>
-          <br />
-          <input
-            type="number"
-            name="prize"
-            value={formData.prize}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Benefit:</label>
-          <br />
-          <input
-            type="text"
-            name="benefit"
-            value={formData.benefit}
-            onChange={handleChange}
-            required
-          />
-        </div>
+    <form onSubmit={handleSubmit} style={{ maxWidth: "400px", margin: "auto" }}>
+      <div>
+        <label>Name:</label>
+        <br />
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Single line description:</label>
+        <br />
+        <input
+          type="text"
+          name="lineDescription"
+          value={formData.lineDescription}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Details:</label>
+        <br />
+        <textarea
+          style={{
+            width: "100%",
+            height: "100px",
+            borderRadius: "5px",
+          }}
+          name="details"
+          value={formData.details}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Prize:</label>
+        <br />
+        <input
+          type="number"
+          name="prize"
+          value={formData.prize}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Benefit:</label>
+        <br />
+        <input
+          type="text"
+          name="benefit"
+          value={formData.benefit}
+          onChange={handleChange}
+          required
+        />
+      </div>
 
-        <div>
-          <label>Upload Images:</label>
-          <br />
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-        </div>
+      <div>
+        <label>Upload Images:</label>
+        <br />
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+      </div>
 
-        <button type="submit" style={{ marginTop: "10px" }}>
+      <div className="admin-create-actions">
+        <button
+          type="submit"
+          className="admin-create-button"
+        >
           Submit
         </button>
-      </form>
-    </>
+        <Link to={"/admin/dashboard"} className="admin-create-back">
+          Back
+        </Link>
+      </div>
+    </form>
   );
 }
