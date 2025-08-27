@@ -55,7 +55,7 @@ export function Profile() {
 
       // Fetch details for each product in the cart
       const productsPromises = ordersData.map(async (orderItem) => {
-        const productResponse = await fetch(`${DOMAIN_URL}products/${orderItem.productId}`);
+        const productResponse = await fetch(`${DOMAIN_URL}products/${orderItem.product_id}`);
         if (!productResponse.ok) {
           console.warn(`Failed to fetch product details for ID: ${orderItem.productId}`);
           return { ...orderItem, productDetails: null }; // Return item with null details
