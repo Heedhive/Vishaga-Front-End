@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./styles.css";
 import { DOMAIN_URL } from "../../constant";
+import { useUser } from "../../utils";
 
 export function Cart() {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cartLoading, setCartLoading] = useState(false);
@@ -52,28 +52,32 @@ export function Cart() {
     }
   };
 
+  const { userInfo } = useUser();
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem("auth_token");
-        if (!token) {
-          navigate("/login");
+        if (token && userInfo) {
+          fetchCartData(userInfo.id, token);
+
           return;
         }
+        navigate("/login");
 
-        const response = await fetch(`${DOMAIN_URL}user_profile`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUserData(data);
-          fetchCartData(data.id, token);
-        } else {
-          navigate("/login");
-        }
+        // const response = await fetch(`${DOMAIN_URL}user_profile`, {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //     "Content-Type": "application/json",
+        //   },
+        // });
+        // if (response.ok) {
+        //   const data = await response.json();
+        //   setUserData(data);
+        //
+        // } else {
+        //   navigate("/login");
+        // }
       } catch (error) {
         console.error("Error fetching user profile:", error);
         navigate("/login");
@@ -83,7 +87,7 @@ export function Cart() {
     };
 
     fetchUserProfile();
-  }, [navigate]);
+  }, [navigate, userInfo]);
 
   const handleRemoveItem = async (itemId) => {
     const confirmDelete = window.confirm(
@@ -110,7 +114,7 @@ export function Cart() {
 
       if (response.ok) {
         alert(data.message || "Item removed successfully!");
-        fetchCartData(userData.id, token);
+        fetchCartData(userInfo.id, token);
       } else {
         alert(data.error || "Failed to remove item.");
       }
@@ -147,7 +151,7 @@ export function Cart() {
 
       if (response.ok) {
         alert(data.message || "Quantity updated successfully!");
-        fetchCartData(userData.id, token);
+        fetchCartData(userInfo.id, token);
       } else {
         alert(data.error || "Failed to update quantity.");
       }
@@ -204,7 +208,7 @@ export function Cart() {
                     razorpay_order_id: response.razorpay_order_id,
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_signature: response.razorpay_signature,
-                    user_id: userData.id
+                    user_id: userInfo.id,
                   }),
                 }
               );
@@ -213,7 +217,7 @@ export function Cart() {
 
               if (verificationResponse.ok) {
                 alert(verificationData.message || "Payment successful!");
-                fetchCartData(userData.id, token);
+                fetchCartData(userInfo.id, token);
               } else {
                 alert(verificationData.error || "Payment verification failed.");
               }
@@ -223,8 +227,8 @@ export function Cart() {
             }
           },
           prefill: {
-            name: userData.username,
-            email: userData.email,
+            name: userInfo.username,
+            email: userInfo.email,
           },
           theme: {
             color: "#3399cc",
@@ -250,7 +254,7 @@ export function Cart() {
       return;
     }
 
-    if (!userData || !userData.id) {
+    if (!userInfo || !userInfo.id) {
       alert("User data not available. Cannot proceed with purchase.");
       return;
     }
@@ -262,7 +266,7 @@ export function Cart() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user_id: userData.id }),
+        body: JSON.stringify({ user_id: userInfo.id }),
       });
 
       const data = await response.json();
@@ -289,7 +293,7 @@ export function Cart() {
                     razorpay_order_id: response.razorpay_order_id,
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_signature: response.razorpay_signature,
-                    user_id: userData.id
+                    user_id: userInfo.id,
                   }),
                 }
               );
@@ -298,7 +302,7 @@ export function Cart() {
 
               if (verificationResponse.ok) {
                 alert(verificationData.message || "Payment successful!");
-                fetchCartData(userData.id, token);
+                fetchCartData(userInfo.id, token);
               } else {
                 alert(verificationData.error || "Payment verification failed.");
               }
@@ -308,8 +312,8 @@ export function Cart() {
             }
           },
           prefill: {
-            name: userData.username,
-            email: userData.email,
+            name: userInfo.username,
+            email: userInfo.email,
           },
           theme: {
             color: "#3399cc",
