@@ -136,7 +136,7 @@ export function ProductDetails() {
           <p>{product.line_description}</p>
           <p>prize - {product.prize} rs /kg</p>
           {cart ? (
-            <Link to={"/profile?tab=cart"}><button>Go to Cart</button></Link>
+            <Link to={"/cart"}><button>Go to Cart</button></Link>
           ) : (
             <p><button onClick={handleOrder} >Add to Cart</button></p>
           )}

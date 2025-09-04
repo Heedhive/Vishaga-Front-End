@@ -1,0 +1,25 @@
+.cart-page {
+    padding-inline: 100px;
+}
+
+.cart-item-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.cart-item-actions {
+    display: flex;
+}
+
+.cart-item-action-buttons {
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 768px) {
+    .cart-page {
+        padding-inline: 20px;
+    }
+}

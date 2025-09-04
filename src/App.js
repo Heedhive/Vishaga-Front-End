@@ -27,7 +27,7 @@ import { Cart } from "./page/cart/index.jsx";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false); // New state for admin login
-  const [loading, setLoading] = useState(true);
+  const [,setLoading] = useState(true);
 
   useEffect(() => {
     const checkLoginStatus = async () => {

@@ -6,7 +6,6 @@ import { DOMAIN_URL } from "../../constant";
 export function Profile() {
   const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
-  const [cartItems, setCartItems] = useState([]); // Renamed from cartData to cartItems for clarity
   const [orderHistoryItems, setOrderHistoryItems] = useState([]); // New state for order history
   const [loading, setLoading] = useState(true);
   const [editUsername, setEditUsername] = useState('');
@@ -14,8 +13,6 @@ export function Profile() {
   const [editPassword, setEditPassword] = useState('');
   const [updateMessage, setUpdateMessage] = useState('');
   const [updateError, setUpdateError] = useState('');
-  const [cartLoading, setCartLoading] = useState(false); // New loading state for cart
-  const [cartError, setCartError] = useState(null); // New error state for cart
   const [orderHistoryLoading, setOrderHistoryLoading] = useState(false); // New loading state for order history
   const [orderHistoryError, setOrderHistoryError] = useState(null); // New error state for order history
   const [searchParams, setSearchParams] = useSearchParams();
@@ -24,56 +21,8 @@ export function Profile() {
 
   useEffect(() => {
     setSearchParams({ tab: activeTab });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
-
-  
-  // Function to fetch cart data - moved outside useEffect for reusability
-  const fetchCartData = async () => {
-    if (!userData || !userData.id) return; // Ensure userData is available
-
-    setCartLoading(true);
-    setCartError(null);
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
-    try {
-      // Fetch orders for the user
-      const ordersResponse = await fetch(`${DOMAIN_URL}cart/${userData.id}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
-
-      if (!ordersResponse.ok) {
-        throw new Error("Failed to fetch orders.");
-      }
-      const ordersData = await ordersResponse.json();
-
-      // Fetch details for each product in the cart
-      const productsPromises = ordersData.map(async (orderItem) => {
-        const productResponse = await fetch(`${DOMAIN_URL}products/${orderItem.product_id}`);
-        if (!productResponse.ok) {
-          console.warn(`Failed to fetch product details for ID: ${orderItem.productId}`);
-          return { ...orderItem, productDetails: null }; // Return item with null details
-        }
-        const productDetails = await productResponse.json();
-        return { ...orderItem, productDetails };
-      });
-
-      const detailedCartItems = await Promise.all(productsPromises);
-      setCartItems(detailedCartItems);
-
-    } catch (err) {
-      console.error("Error fetching cart data:", err);
-      setCartError("Failed to load cart. Please try again.");
-    } finally {
-      setCartLoading(false);
-    }
-  };
 
   // Function to fetch order history data
   const fetchOrderHistoryData = async () => {
@@ -156,18 +105,12 @@ export function Profile() {
     fetchUserProfile();
   }, [navigate]);
 
-  // Fetch cart data when tab changes or userData becomes available
-  useEffect(() => {
-    if (activeTab === "cart" && userData) {
-      fetchCartData();
-    }
-  }, [activeTab, userData, navigate]);
-
   // Fetch order history data when tab changes or userData becomes available
   useEffect(() => {
     if (activeTab === "orders" && userData) {
       fetchOrderHistoryData();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, userData, navigate]);
 
   const handleProfileUpdate = async (e) => {
@@ -216,245 +159,6 @@ export function Profile() {
     }
   };
 
-  const handleRemoveItem = async (itemId) => {
-    const confirmDelete = window.confirm("Are you sure you want to remove this item from your cart?");
-    if (!confirmDelete) return;
-
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-      alert("Authentication token missing. Please log in again.");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${DOMAIN_URL}cart/${itemId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data.message || "Item removed successfully!");
-        fetchCartData(); // Re-fetch cart data to update UI
-      } else {
-        alert(data.error || "Failed to remove item.");
-      }
-    } catch (error) {
-      console.error("Error removing item:", error);
-      alert("Network error. Please try again.");
-    }
-  };
-
-  const handleQuantityChange = async (itemId, newQuantity) => {
-    if (newQuantity < 1) {
-      handleRemoveItem(itemId); // Remove if quantity goes to 0 or less
-      return;
-    }
-
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-      alert("Authentication token missing. Please log in again.");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${DOMAIN_URL}cart/${itemId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ quantity: newQuantity }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data.message || "Quantity updated successfully!");
-        fetchCartData(); // Re-fetch cart data to update UI
-      } else {
-        alert(data.error || "Failed to update quantity.");
-      }
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-      alert("Network error. Please try again.");
-    }
-  };
-
-  const handleBuyItem = async (itemId, price, quantity) => {
-    const confirmBuy = window.confirm("Are you sure you want to buy this item?");
-    if (!confirmBuy) return;
-
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-      alert("Authentication token missing. Please log in again.");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${DOMAIN_URL}cart/buy_item/${itemId}`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ amount: price * quantity, currency: 'INR' }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const options = {
-          key: data.razorpay_key,
-          amount: data.amount,
-          currency: data.currency,
-          name: "Rice",
-          description: "Payment for your order",
-          order_id: data.order_id,
-          handler: async function (response) {
-            try {
-              const verificationResponse = await fetch(
-                `${DOMAIN_URL}cart/verify_payment`,
-                {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature,
-                  }),
-                }
-              );
-
-              const verificationData = await verificationResponse.json();
-
-              if (verificationResponse.ok) {
-                alert(verificationData.message || "Payment successful!");
-                fetchCartData(); // Re-fetch cart data to update UI
-              } else {
-                alert(
-                  verificationData.error || "Payment verification failed."
-                );
-              }
-            } catch (error) {
-              console.error("Error verifying payment:", error);
-              alert("Network error. Please try again.");
-            }
-          },
-          prefill: {
-            name: userData.username,
-            email: userData.email,
-          },
-          theme: {
-            color: "#3399cc",
-          },
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } else {
-        alert(data.error || "Failed to create Razorpay order.");
-      }
-    } catch (error) {
-      console.error("Error creating Razorpay order:", error);
-      alert("Network error. Please try again.");
-    }
-  };
-
-  const handlePayment = async () => {
-    const token = localStorage.getItem('auth_token');
-    if (!token) {
-      alert("Authentication token missing. Please log in again.");
-      navigate("/login");
-      return;
-    }
-
-    if (!userData || !userData.id) {
-      alert("User data not available. Cannot proceed with purchase.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${DOMAIN_URL}cart/checkout`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_id: userData.id }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const options = {
-          key: data.razorpay_key,
-          amount: data.amount,
-          currency: data.currency,
-          name: "Rice",
-          description: "Payment for your order",
-          order_id: data.order_id,
-          handler: async function (response) {
-            try {
-              const verificationResponse = await fetch(`${DOMAIN_URL}cart/verify_payment`,
-                {
-                  method: 'POST',
-                  headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature,
-                  }),
-                }
-              );
-
-              const verificationData = await verificationResponse.json();
-
-              if (verificationResponse.ok) {
-                alert(verificationData.message || "Payment successful!");
-                fetchCartData(); // Re-fetch cart data to update UI
-              } else {
-                alert(verificationData.error || "Payment verification failed.");
-              }
-            } catch (error) {
-              console.error("Error verifying payment:", error);
-              alert("Network error. Please try again.");
-            }
-          },
-          prefill: {
-            name: userData.username,
-            email: userData.email,
-          },
-          theme: {
-            color: "#3399cc",
-          },
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } else {
-        alert(data.error || "Failed to create Razorpay order.");
-      }
-    } catch (error) {
-      console.error("Error creating Razorpay order:", error);
-      alert("Network error. Please try again.");
-    }
-  };
-
   if (loading) {
     return (
       <div className="profile-page">
@@ -479,12 +183,6 @@ export function Profile() {
             className={activeTab === "edit" ? "active" : ""}
           >
             Edit Profile
-          </li>
-          <li
-            onClick={() => setActiveTab("cart")}
-            className={activeTab === "cart" ? "active" : ""}
-          >
-            Cart
           </li>
           <li
             onClick={() => setActiveTab("orders")}
@@ -545,64 +243,6 @@ export function Profile() {
               />
               <button type="submit">Update</button>
             </form>
-          </div>
-        )}
-
-        {activeTab === "cart" && (
-          <div>
-            <h3>Your Cart</h3>
-            {cartLoading ? (
-              <p>Loading cart...</p>
-            ) : cartError ? (
-              <p className="error-message">{cartError}</p>
-            ) : cartItems.length === 0 ? (
-              <p>Your cart is empty.</p>
-            ) : (
-              <div className="cart-items-list">
-                {cartItems.map((item) => (
-                  <div key={item.id} className="cart-item-card">
-                    {item.productDetails && item.productDetails.images && item.productDetails.images.length > 0 && (
-                      <img
-                        src={`${DOMAIN_URL}${item.productDetails.images[0]}`}
-                        alt={item.productDetails.name}
-                        className="cart-item-image"
-                        width={"100"}
-                        height={"100"}
-                      />
-                    )}
-                    <div className="cart-item-details">
-                      <h3>{item.productDetails ? item.productDetails.name : 'Product Not Found'}</h3>
-                      <p>Price: {item.productDetails ? item.productDetails.prize * item.quantity : 'N/A'}</p>
-                      <div className="cart-item-quantity-controls">
-                        <button onClick={() => handleQuantityChange(item.id, item.quantity - 1)}>-</button>
-                        <input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value))}
-                          min="1"
-                        />
-                        <button onClick={() => handleQuantityChange(item.id, item.quantity + 1)}>+</button>
-                      </div>
-                      <button
-                        onClick={() => handleRemoveItem(item.id)}
-                        className="remove-item-button"
-                      >
-                        Remove
-                      </button>
-                      <button
-                        onClick={() => handleBuyItem(item.id, item.productDetails.prize, item.quantity)}
-                        className="buy-item-button"
-                      >
-                        Pay with Razorpay
-                      </button>
-                    </div>
-                  </div>
-                ))}
-                <div className="cart-summary">
-                  <button onClick={handlePayment} className="buy-all-button">Pay with Razorpay</button>
-                </div>
-              </div>
-            )}
           </div>
         )}
 
