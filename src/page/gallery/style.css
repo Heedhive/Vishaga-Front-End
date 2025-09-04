@@ -61,3 +61,20 @@
     margin: 10px 0;
   }
 }
+
+.image-process {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: 50px;
+}
+
+.image-process img {
+  width: 1000px;
+}
+
+@media (max-width: 768px) {
+  .image-process img {
+    width: 90%;
+  }
+}

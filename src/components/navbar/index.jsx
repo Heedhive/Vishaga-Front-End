@@ -96,6 +96,15 @@ export default function Navbar({
           </li>
           <li>
             <Link
+              to="/cart"
+              className={location.pathname === "/cart" ? "active-nav-link" : ""}
+              onClick={() => setMenuOpen(false)}
+            >
+              Cart
+            </Link>
+          </li>
+          <li>
+            <Link
               to="/profile"
               className={location.pathname === "/profile" ? "active-nav-link" : ""}
               onClick={() => setMenuOpen(false)}
