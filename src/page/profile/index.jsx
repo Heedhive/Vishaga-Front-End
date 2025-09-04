@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import "./style.css";
 import { DOMAIN_URL } from "../../constant";
+import { useUser } from "../../utils";
 
 export function Profile() {
   const navigate = useNavigate();
@@ -70,30 +71,35 @@ export function Profile() {
     }
   };
 
+  const { userInfo } = useUser();
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem('auth_token');
-        if (!token) {
-          navigate("/login");
+        if (token && userInfo) {
+          setUserData(userInfo);
+          setEditUsername(userInfo.username);
+          setEditEmail(userInfo.email);
+          
           return;
         }
-
-        const response = await fetch(`${DOMAIN_URL}user_profile`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setUserData(data);
-          setEditUsername(data.username);
-          setEditEmail(data.email);
-        } else {
-          // If not logged in or token invalid, navigate to login
-          navigate("/login");
-        }
+        navigate("/login");
+        // const response = await fetch(`${DOMAIN_URL}user_profile`, {
+        //   headers: {
+        //     'Authorization': `Bearer ${token}`,
+        //     "Content-Type": "application/json"
+        //   }
+        // });
+        // if (response.ok) {
+        //   const data = await response.json();
+        //   setUserData(data);
+        //   setEditUsername(data.username);
+        //   setEditEmail(data.email);
+        // } else {
+        //   // If not logged in or token invalid, navigate to login
+        //   navigate("/login");
+        // }
       } catch (error) {
         console.error("Error fetching user profile:", error);
         navigate("/login"); // Navigate to login on error
@@ -103,7 +109,7 @@ export function Profile() {
     };
 
     fetchUserProfile();
-  }, [navigate]);
+  }, [navigate, userInfo]);
 
   // Fetch order history data when tab changes or userData becomes available
   useEffect(() => {

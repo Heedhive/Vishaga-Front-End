@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import "./signup.css"; // same CSS can be reused from login
 import { DOMAIN_URL } from "../../constant";
+import { useUser } from "../../utils";
 
 export function Signup({ setIsLoggedIn }) {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export function Signup({ setIsLoggedIn }) {
   const [address, setAddress] = useState("");
   const [error, setError] = useState("");
 
+  const {setUserInfo} = useUser()
   const handleSignup = () => {
     if (!username || !email || !password) {
       setError("Please fill in all fields.");
@@ -31,6 +33,20 @@ export function Signup({ setIsLoggedIn }) {
           localStorage.setItem("auth_token", data.token);
           setIsLoggedIn(true);
           navigate("/home");
+          // Fetch and set user profile data
+          fetch(`${DOMAIN_URL}user_profile`, {
+            headers: {
+              Authorization: `Bearer ${data.token}`,
+              "Content-Type": "application/json",
+            },
+          })
+            .then((res) => res.json())
+            .then((profileData) => {
+              setUserInfo(profileData);
+            })
+            .catch((err) => {
+              console.error("Error fetching user profile:", err);
+            });
         } else {
           setError(data.error || "Signup failed");
         }

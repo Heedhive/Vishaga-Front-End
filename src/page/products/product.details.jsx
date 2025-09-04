@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { DOMAIN_URL } from "../../constant";
 import { Link, useParams } from "react-router-dom";
 import "./productDetails.css";
+import { useUser } from "../../utils";
 
 export function ProductDetails() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [benefits,setBenefits] = useState([]);
+  const [benefits, setBenefits] = useState([]);
   const [cart, setCart] = useState(null);
 
   useEffect(() => {
@@ -20,25 +21,22 @@ export function ProductDetails() {
       });
   }, [id]);
 
+  const { userInfo } = useUser();
+
   useEffect(() => {
     const readCart = async () => {
       const token = localStorage.getItem("auth_token");
-      if (token && product) {
-        fetch(`${DOMAIN_URL}user_profile`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }).then((res) => {
-          return res.json();
-        }).then((data) => {
-          if (data.id){
-            fetch(`${DOMAIN_URL}cart/${data.id}`).then((res) => {
+      if (token && product && userInfo) {
+        if (userInfo.id) {
+          fetch(`${DOMAIN_URL}cart/${userInfo.id}`)
+            .then((res) => {
               return res.json();
-            }
-            ).then((cartData) => {
-              if (cartData && cartData.length > 0){
-                const productInCart = cartData.find(item => item.product_id === product.id);
+            })
+            .then((cartData) => {
+              if (cartData && cartData.length > 0) {
+                const productInCart = cartData.find(
+                  (item) => item.product_id === product.id
+                );
                 if (productInCart) {
                   setCart(productInCart);
                 } else {
@@ -47,25 +45,24 @@ export function ProductDetails() {
               } else {
                 setCart(null);
               }
-            }).catch((error) => {
+            })
+            .catch((error) => {
               console.error("Error fetching cart:", error);
             });
-          } 
-        });
+        }
       }
     };
     readCart();
-  }, [product]);
+  }, [product, userInfo]);
 
   useEffect(() => {
-    if (product && product.benefit){
+    if (product && product.benefit) {
       const benefits = product.benefit.split(",");
-      if (benefits.length > 0){
+      if (benefits.length > 0) {
         setBenefits(benefits);
       }
-      
     }
-  }, [product])
+  }, [product]);
 
   if (!product) {
     return (
@@ -136,9 +133,13 @@ export function ProductDetails() {
           <p>{product.line_description}</p>
           <p>prize - {product.prize} rs /kg</p>
           {cart ? (
-            <Link to={"/cart"}><button>Go to Cart</button></Link>
+            <Link to={"/cart"}>
+              <button>Go to Cart</button>
+            </Link>
           ) : (
-            <p><button onClick={handleOrder} >Add to Cart</button></p>
+            <p>
+              <button onClick={handleOrder}>Add to Cart</button>
+            </p>
           )}
         </div>
       </div>
@@ -151,9 +152,11 @@ export function ProductDetails() {
       <div className="product-benefits-vision">
         <div className="product-benefits">
           <h3>Benefits</h3>
-          <ul>{benefits.map((benefit, inx) => (
-            <li key={inx}>{benefit.trim()}</li>
-          ))}</ul>
+          <ul>
+            {benefits.map((benefit, inx) => (
+              <li key={inx}>{benefit.trim()}</li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
