@@ -27,7 +27,7 @@ export function Products() {
       <div className="products-grid">
         {products && products.map((product, index) => (
           <div className="product-card" key={index}>
-            {product.images && product.images[0] && <img src={`${DOMAIN_URL}${product.images[0]}`} alt={product.name} />}
+            {product.images && product.images[0] && <img src={`${DOMAIN_URL}${product.images[0]}`} alt={product.name} loading="lazy" />}
             <div className="product-info">
               <h3>{product.name}</h3>
               <h3>{product.prize} rs / kg</h3>

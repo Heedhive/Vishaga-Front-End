@@ -1,32 +1,34 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import './signup.css'; // same CSS can be reused from login
-import { DOMAIN_URL } from '../../constant';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import "./signup.css"; // same CSS can be reused from login
+import { DOMAIN_URL } from "../../constant";
 
 export function Signup({ setIsLoggedIn }) {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [address, setAddress] = useState("");
+  const [error, setError] = useState("");
 
   const handleSignup = () => {
     if (!username || !email || !password) {
       setError("Please fill in all fields.");
       return;
     }
-  
+
     fetch(`${DOMAIN_URL}signup`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ username, email, password })
+      body: JSON.stringify({ username, email, password, phone_number: phoneNumber, address}),
     })
       .then((res) => res.json())
       .then((data) => {
         if (data.message === "Signup successful" && data.token) {
-          localStorage.setItem('auth_token', data.token);
+          localStorage.setItem("auth_token", data.token);
           setIsLoggedIn(true);
           navigate("/home");
         } else {
@@ -50,19 +52,36 @@ export function Signup({ setIsLoggedIn }) {
           placeholder="Full Name"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          required
         />
         <input
           type="email"
           placeholder="Email Address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
           placeholder="Create Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
+        <input
+          type="number"
+          placeholder="Phone Number"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          required
+          />
         <button onClick={handleSignup}>Sign Up</button>
         <p className="login-text">
           Already have an account? <Link to="/login">Login</Link>

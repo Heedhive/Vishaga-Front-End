@@ -22,11 +22,12 @@ import { About } from "./page/about/index.jsx";
 import { AdminLogin } from "./page/admin/admin.login"; // Import AdminLogin
 import { DOMAIN_URL } from "./constant/index.js";
 import Footer from "./components/footer/index.jsx";
+import { Cart } from "./page/cart/index.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false); // New state for admin login
-  const [loading, setLoading] = useState(true);
+  const [,setLoading] = useState(true);
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -146,6 +147,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/about" element={<About />} />
         <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/cart" element={<Cart />} />
 
         {/* Default Route */}
         {/* <Route

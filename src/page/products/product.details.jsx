@@ -38,7 +38,7 @@ export function ProductDetails() {
             }
             ).then((cartData) => {
               if (cartData && cartData.length > 0){
-                const productInCart = cartData.find(item => item.productId === product.id);
+                const productInCart = cartData.find(item => item.product_id === product.id);
                 if (productInCart) {
                   setCart(productInCart);
                 } else {
@@ -124,7 +124,7 @@ export function ProductDetails() {
         <div className="product-image">
           {product.images && (
             <img
-              src={`${DOMAIN_URL}${product.images}`}
+              src={`${DOMAIN_URL}${product.images[0]}`}
               alt={product.name}
               width={"250px"}
               height={"250px"}
@@ -136,7 +136,7 @@ export function ProductDetails() {
           <p>{product.line_description}</p>
           <p>prize - {product.prize} rs /kg</p>
           {cart ? (
-            <Link to={"/profile?tab=cart"}><button>Go to Cart</button></Link>
+            <Link to={"/cart"}><button>Go to Cart</button></Link>
           ) : (
             <p><button onClick={handleOrder} >Add to Cart</button></p>
           )}
