@@ -133,7 +133,9 @@ export default function Navbar({
             </>
           ) : isLoggedIn ? (
             <li>
-              <button onClick={handleLogout}>Logout</button>
+              <button onClick={handleLogout} style={{
+                color: 'white',
+              }}>Logout</button>
             </li>
           ) : (
             <li>
