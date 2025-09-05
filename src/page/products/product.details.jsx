@@ -106,6 +106,7 @@ export function ProductDetails() {
         return response.json();
       })
       .then((data) => {
+        setCart(data);
         console.log("cart successful:", data);
         alert("Added to cart!!");
       })

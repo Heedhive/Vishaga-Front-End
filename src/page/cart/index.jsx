@@ -129,14 +129,21 @@ export function Cart() {
       handleRemoveItem(itemId);
       return;
     }
-
+  
+    // Optimistically update the cartItems state
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === itemId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  
     const token = localStorage.getItem("auth_token");
     if (!token) {
       alert("Authentication token missing. Please log in again.");
       navigate("/login");
       return;
     }
-
+  
     try {
       const response = await fetch(`${DOMAIN_URL}cart/${itemId}`, {
         method: "PUT",
@@ -146,20 +153,24 @@ export function Cart() {
         },
         body: JSON.stringify({ quantity: newQuantity }),
       });
-
+  
       const data = await response.json();
-
-      if (response.ok) {
-        alert(data.message || "Quantity updated successfully!");
-        fetchCartData(userInfo.id, token);
-      } else {
+  
+      if (!response.ok) {
         alert(data.error || "Failed to update quantity.");
+  
+        // Revert state if failed
+        setCartItems((prevItems) =>
+          prevItems.map((item) =>
+            item.id === itemId ? { ...item, quantity: item.quantity } : item
+          )
+        );
       }
     } catch (error) {
       console.error("Error updating quantity:", error);
       alert("Network error. Please try again.");
     }
-  };
+  };  
 
   const handleBuyItem = async (itemId, price, quantity) => {
     const confirmBuy = window.confirm(
