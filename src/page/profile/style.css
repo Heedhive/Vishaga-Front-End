@@ -217,8 +217,6 @@
   cursor: pointer;
   font-size: 0.9em;
   transition: background-color 0.3s ease;
-  margin-top: 10px;
-  margin-left: 10px; /* Space from remove button */
 }
 
 .buy-item-button:hover {
