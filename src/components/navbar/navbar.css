@@ -81,7 +81,7 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
 
-  .navbar-links li a {
+  .navbar-links li a, .navbar-links li button {
     text-decoration: none;
     color: #fff;
     font-weight: 500;
@@ -101,5 +101,9 @@
     width: 100%;
     padding: 8px 0;
     text-align: left;
+  }
+  .navbar-links li a.active-nav-link{
+    color: #e3750e;
+    border-bottom: 2px solid #e3750e;
   }
 }

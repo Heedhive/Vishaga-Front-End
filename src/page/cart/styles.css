@@ -22,7 +22,14 @@
     gap: 20px;
 }
 
+@media (max-width: 900px) {
+    .cart-page {
+        padding-inline: 100px;
+    }
+}
+
 @media (max-width: 768px) {
+
     .cart-page {
         padding-inline: 20px;
     }
@@ -37,7 +44,14 @@
     }
     .cart-item-action-buttons {
         flex-direction: row;
+
         justify-content: center;
         margin: 10px 0;
     }
 }
+
+@media (max-width: 600px) {
+    .cart-item-action-buttons {
+        gap: 5px;
+    }
+ }

@@ -37,7 +37,7 @@ export default function Navbar({
     <nav className="navbar">
       <div className="navbar-container">
         {/* Logo */}
-        <div className="navbar-logo">
+        <div className="navbar-logo" onClick={() => navigate("/home")}>
           <img
             src={logo}
             alt="Logo"
@@ -133,9 +133,7 @@ export default function Navbar({
             </>
           ) : isLoggedIn ? (
             <li>
-              <button onClick={handleLogout} style={{
-                color: 'white',
-              }}>Logout</button>
+              <button onClick={handleLogout}>Logout</button>
             </li>
           ) : (
             <li>
