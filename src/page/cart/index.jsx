@@ -8,157 +8,50 @@ export function Cart() {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [cartLoading, setCartLoading] = useState(false);
   const [cartError, setCartError] = useState(null);
+  const { userInfo } = useUser();
 
-  const fetchCartData = async (userId, token) => {
-    setCartLoading(true);
+  const fetchCartData = () => {
+    setLoading(true);
     setCartError(null);
-
     try {
-      const ordersResponse = await fetch(`${DOMAIN_URL}cart/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!ordersResponse.ok) {
-        throw new Error("Failed to fetch orders.");
-      }
-      const ordersData = await ordersResponse.json();
-
-      const productsPromises = ordersData.map(async (orderItem) => {
-        const productResponse = await fetch(
-          `${DOMAIN_URL}products/${orderItem.product_id}`
-        );
-        if (!productResponse.ok) {
-          console.warn(
-            `Failed to fetch product details for ID: ${orderItem.productId}`
-          );
-          return { ...orderItem, productDetails: null };
-        }
-        const productDetails = await productResponse.json();
-        return { ...orderItem, productDetails };
-      });
-
-      const detailedCartItems = await Promise.all(productsPromises);
-      setCartItems(detailedCartItems);
+      const localCart = localStorage.getItem("cart");
+      const cart = localCart ? JSON.parse(localCart) : [];
+      setCartItems(cart);
     } catch (err) {
-      console.error("Error fetching cart data:", err);
+      console.error("Error fetching cart data from local storage:", err);
       setCartError("Failed to load cart. Please try again.");
     } finally {
-      setCartLoading(false);
+      setLoading(false);
     }
   };
 
-  const { userInfo } = useUser();
-
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const token = localStorage.getItem("auth_token");
-        if (token && userInfo) {
-          fetchCartData(userInfo.id, token);
+    fetchCartData();
+  }, []);
 
-          return;
-        }
-        navigate("/login");
-
-        // const response = await fetch(`${DOMAIN_URL}user_profile`, {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //     "Content-Type": "application/json",
-        //   },
-        // });
-        // if (response.ok) {
-        //   const data = await response.json();
-        //   setUserData(data);
-        //
-        // } else {
-        //   navigate("/login");
-        // }
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        navigate("/login");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, [navigate, userInfo]);
-
-  const handleRemoveItem = async (itemId) => {
+  const handleRemoveItem = (productId) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to remove this item from your cart?"
     );
     if (!confirmDelete) return;
 
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      alert("Authentication token missing. Please log in again.");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${DOMAIN_URL}cart/${itemId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data.message || "Item removed successfully!");
-        fetchCartData(userInfo.id, token);
-      } else {
-        alert(data.error || "Failed to remove item.");
-      }
-    } catch (error) {
-      console.error("Error removing item:", error);
-      alert("Network error. Please try again.");
-    }
+    const updatedCart = cartItems.filter((item) => item.id !== productId);
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  const handleQuantityChange = async (itemId, newQuantity) => {
+  const handleQuantityChange = (productId, newQuantity) => {
     if (newQuantity < 1) {
-      handleRemoveItem(itemId);
+      handleRemoveItem(productId);
       return;
     }
 
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      alert("Authentication token missing. Please log in again.");
-      navigate("/login");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${DOMAIN_URL}cart/${itemId}`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ quantity: newQuantity }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        alert(data.message || "Quantity updated successfully!");
-        fetchCartData(userInfo.id, token);
-      } else {
-        alert(data.error || "Failed to update quantity.");
-      }
-    } catch (error) {
-      console.error("Error updating quantity:", error);
-      alert("Network error. Please try again.");
-    }
+    const updatedCart = cartItems.map((item) =>
+      item.id === productId ? { ...item, quantity: newQuantity } : item
+    );
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   const handleBuyItem = async (itemId, price, quantity) => {
@@ -168,20 +61,20 @@ export function Cart() {
     if (!confirmBuy) return;
 
     const token = localStorage.getItem("auth_token");
-    if (!token) {
+    if (!token || !userInfo) {
       alert("Authentication token missing. Please log in again.");
       navigate("/login");
       return;
     }
 
     try {
-      const response = await fetch(`${DOMAIN_URL}cart/buy_item/${itemId}`, {
+      const response = await fetch(`${DOMAIN_URL}cart/buy_item`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ amount: price * quantity, currency: "INR" }),
+        body: JSON.stringify({ amount: price * quantity, currency: "INR", product_id: itemId, quantity }),
       });
 
       const data = await response.json();
@@ -209,6 +102,8 @@ export function Cart() {
                     razorpay_payment_id: response.razorpay_payment_id,
                     razorpay_signature: response.razorpay_signature,
                     user_id: userInfo.id,
+                    phone_number: userInfo.phone_number,
+                    address: userInfo.address,
                   }),
                 }
               );
@@ -217,92 +112,9 @@ export function Cart() {
 
               if (verificationResponse.ok) {
                 alert(verificationData.message || "Payment successful!");
-                fetchCartData(userInfo.id, token);
-              } else {
-                alert(verificationData.error || "Payment verification failed.");
-              }
-            } catch (error) {
-              console.error("Error verifying payment:", error);
-              alert("Network error. Please try again.");
-            }
-          },
-          prefill: {
-            name: userInfo.username,
-            email: userInfo.email,
-          },
-          theme: {
-            color: "#3399cc",
-          },
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.open();
-      } else {
-        alert(data.error || "Failed to create Razorpay order.");
-      }
-    } catch (error) {
-      console.error("Error creating Razorpay order:", error);
-      alert("Network error. Please try again.");
-    }
-  };
-
-  const handlePayment = async () => {
-    const token = localStorage.getItem("auth_token");
-    if (!token) {
-      alert("Authentication token missing. Please log in again.");
-      navigate("/login");
-      return;
-    }
-
-    if (!userInfo || !userInfo.id) {
-      alert("User data not available. Cannot proceed with purchase.");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${DOMAIN_URL}cart/checkout`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user_id: userInfo.id }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const options = {
-          key: data.razorpay_key,
-          amount: data.amount,
-          currency: data.currency,
-          name: "Rice",
-          description: "Payment for your order",
-          order_id: data.order_id,
-          handler: async function (response) {
-            try {
-              const verificationResponse = await fetch(
-                `${DOMAIN_URL}cart/verify_payment`,
-                {
-                  method: "POST",
-                  headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature,
-                    user_id: userInfo.id,
-                  }),
-                }
-              );
-
-              const verificationData = await verificationResponse.json();
-
-              if (verificationResponse.ok) {
-                alert(verificationData.message || "Payment successful!");
-                fetchCartData(userInfo.id, token);
+                const updatedCart = cartItems.filter((item) => item.id !== itemId);
+                setCartItems(updatedCart);
+                localStorage.setItem("cart", JSON.stringify(updatedCart));
               } else {
                 alert(verificationData.error || "Payment verification failed.");
               }
@@ -342,9 +154,7 @@ export function Cart() {
   return (
     <div className="cart-page">
       <h3>Your Cart</h3>
-      {cartLoading ? (
-        <p>Loading cart...</p>
-      ) : cartError ? (
+      {cartError ? (
         <p className="error-message">{cartError}</p>
       ) : cartItems.length === 0 ? (
         <p>Your cart is empty.</p>
@@ -426,11 +236,6 @@ export function Cart() {
               </div>
             </div>
           ))}
-          <div className="cart-summary">
-            <button onClick={handlePayment} className="buy-all-button">
-              Pay with Razorpay
-            </button>
-          </div>
         </div>
       )}
     </div>

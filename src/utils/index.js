@@ -24,7 +24,10 @@ export function UserProvider({ children }) {
       })
         .then((res) => res.json())
         .then((data) => {
-          setUserInfo(data);
+          if (data.id) {
+            setUserInfo(data);
+          }
+
           setLoading(false);
         })
         .catch((error) => {
@@ -49,7 +52,9 @@ export function UserProvider({ children }) {
   }, []);
 
   return (
-    <UserContext.Provider value={{ userInfo, setUserInfo, loading, products, setProducts }}>
+    <UserContext.Provider
+      value={{ userInfo, setUserInfo, loading, products, setProducts }}
+    >
       {children}
     </UserContext.Provider>
   );

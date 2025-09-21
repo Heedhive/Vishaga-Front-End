@@ -37,7 +37,7 @@ export default function Navbar({
     <nav className="navbar">
       <div className="navbar-container">
         {/* Logo */}
-        <div className="navbar-logo">
+        <div className="navbar-logo" onClick={() => navigate("/home")}>
           <img
             src={logo}
             alt="Logo"
@@ -45,7 +45,7 @@ export default function Navbar({
             width="80"
             height="80"
           />
-          <span>Vishaga Foods</span>
+          <span>Agro Foods</span>
         </div>
 
         {/* Hamburger Icon */}

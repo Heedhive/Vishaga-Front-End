@@ -217,8 +217,6 @@
   cursor: pointer;
   font-size: 0.9em;
   transition: background-color 0.3s ease;
-  margin-top: 10px;
-  margin-left: 10px; /* Space from remove button */
 }
 
 .buy-item-button:hover {
@@ -251,5 +249,17 @@
 @media (max-width: 768px) {
   .profile-page {
     flex-direction: column;
+  }
+  .profile-sidebar {
+    min-width: 100%;
+    max-width: 100%;
+    box-shadow: none;
+    padding: 0;
+    overflow-x: auto;
+  }
+  .profile-sidebar ul {
+    display: flex;
+    gap: 10px;
+
   }
 }

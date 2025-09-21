@@ -11,11 +11,11 @@ export function Contact() {
 
   const sendEmail = (e) => {
     e.preventDefault();
-    emailjs.sendForm('service_vf1xct2', 'template_tiyf55g', form.current, 'RvlX4cKLWdp1UQopG')
+    emailjs.sendForm('service_rkmwe9v', 'template_2ok1m47', form.current, 'U9__eJ703wlK1fm_O')
       .then((result) => {
           console.log(result.text);
-          // e.target.user_email.value = "";
-          form.current.value = "";
+          alert("Message sent successfully");
+          form.current.reset();
       }, (error) => {
           console.log(error.text);
       });
@@ -40,9 +40,9 @@ export function Contact() {
       <div className="contact-container">
         <h2>Contact Us</h2>
         <form ref={form} onSubmit={sendEmail}>
-          <input type="text" placeholder="Name" />
-          <input type="email" placeholder="Email" />
-          <textarea rows="4" placeholder="Message"></textarea>
+          <input type="text" placeholder="Name" name="name" />
+          <input type="email" placeholder="Email" name="email"/>
+          <textarea rows="4" placeholder="Message" name="message"></textarea>
           <button type="submit">Send</button>
         </form>
       </div>

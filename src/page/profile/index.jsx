@@ -277,7 +277,7 @@ export function Profile() {
                     <div className="order-item-details">
                       <h3>{item.productDetails ? item.productDetails.name : 'Product Not Found'}</h3>
                       <p>Quantity: {item.quantity}</p>
-                      <p>Price at Purchase: ${item.price_at_purchase}</p>
+                      <p>Price at Purchase: {item.quantity * item.price_at_purchase}</p>
                       <p>Purchase Date: {new Date(item.purchase_date).toLocaleDateString()}</p>
                     </div>
                   </div>

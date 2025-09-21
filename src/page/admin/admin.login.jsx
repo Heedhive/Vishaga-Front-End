@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './admin.login.css'; // You can create this CSS file for styling
+import { DOMAIN_URL } from '../../constant';
 
 export function AdminLogin({ setIsAdminLoggedIn }) {
   const navigate = useNavigate();
@@ -8,17 +9,29 @@ export function AdminLogin({ setIsAdminLoggedIn }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  // HARDCODED ADMIN CREDENTIALS - DO NOT USE IN PRODUCTION
-  const ADMIN_USERNAME = 'admin';
-  const ADMIN_PASSWORD = 'adminpassword'; 
+  const handleLogin = async () => {
+    try {
+      const response = await fetch(`${DOMAIN_URL}admin/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-  const handleLogin = () => {
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      setIsAdminLoggedIn(true);
-      localStorage.setItem('is_admin', 'true'); // Store admin status
-      navigate('/admin/dashboard');
-    } else {
-      setError('Invalid admin credentials');
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('auth_token', data.token);
+        localStorage.setItem('is_admin', 'true');
+        setIsAdminLoggedIn(true);
+        navigate('/admin/dashboard');
+      } else {
+        const errorData = await response.json();
+        setError(errorData.error || 'Invalid admin credentials');
+      }
+    } catch (error) {
+      console.error('Error during admin login:', error);
+      setError('An error occurred. Please try again.');
     }
   };
 
