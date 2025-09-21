@@ -45,7 +45,7 @@ export default function Navbar({
             width="80"
             height="80"
           />
-          <span>Vishaga Foods</span>
+          <span>Agro Foods</span>
         </div>
 
         {/* Hamburger Icon */}

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { DOMAIN_URL } from "../../constant";
 import { Link, useParams } from "react-router-dom";
 import "./productDetails.css";
-import { useUser } from "../../utils";
 
 export function ProductDetails() {
   const { id } = useParams();
@@ -21,39 +20,25 @@ export function ProductDetails() {
       });
   }, [id]);
 
-  const { userInfo } = useUser();
-
   useEffect(() => {
-    const readCart = async () => {
-      const token = localStorage.getItem("auth_token");
-      if (token && product && userInfo) {
-        if (userInfo.id) {
-          fetch(`${DOMAIN_URL}cart/${userInfo.id}`)
-            .then((res) => {
-              return res.json();
-            })
-            .then((cartData) => {
-              if (cartData && cartData.length > 0) {
-                const productInCart = cartData.find(
-                  (item) => item.product_id === product.id
-                );
-                if (productInCart) {
-                  setCart(productInCart);
-                } else {
-                  setCart(null);
-                }
-              } else {
-                setCart(null);
-              }
-            })
-            .catch((error) => {
-              console.error("Error fetching cart:", error);
-            });
+    const readCart = () => {
+      const localCart = localStorage.getItem("cart");
+      if (localCart && product) {
+        const cartData = JSON.parse(localCart);
+        if (cartData && cartData.length > 0) {
+          const productInCart = cartData.find((item) => item.id === product.id);
+          if (productInCart) {
+            setCart(productInCart);
+          } else {
+            setCart(null);
+          }
+        } else {
+          setCart(null);
         }
       }
     };
     readCart();
-  }, [product, userInfo]);
+  }, [product]);
 
   useEffect(() => {
     if (product && product.benefit) {
@@ -72,48 +57,27 @@ export function ProductDetails() {
     );
   }
 
-  const handleOrder = async () => {
-    const token = localStorage.getItem("auth_token");
-    const response = await fetch(`${DOMAIN_URL}user_profile`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      alert("Login to add to cart");
+  const handleOrder = () => {
+    const localCart = localStorage.getItem("cart");
+    const cartData = localCart ? JSON.parse(localCart) : [];
+    const productInCart = cartData.find((item) => item.id === product.id);
+
+    if (productInCart) {
+      alert("Product is already in the cart.");
       return;
     }
-    const data = await response.json();
+
     const orderData = {
-      productId: product.id,
-      productName: product.name,
+      id: product.id,
+      name: product.name,
       quantity: 1,
-      userId: data.id,
+      productDetails: product,
     };
 
-    fetch(`${DOMAIN_URL}cart`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(orderData),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Cart request failed");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setCart(data);
-        console.log("cart successful:", data);
-        alert("Added to cart!!");
-      })
-      .catch((error) => {
-        console.error("Error placing order:", error);
-        alert("Failed to add cart. Please try again.");
-      });
+    cartData.push(orderData);
+    localStorage.setItem("cart", JSON.stringify(cartData));
+    setCart(orderData);
+    alert("Added to cart!!");
   };
 
   return (

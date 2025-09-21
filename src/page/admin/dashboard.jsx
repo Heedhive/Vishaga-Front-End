@@ -73,6 +73,8 @@ export function AdminDashBoard() {
               <th>Quantity</th>
               <th>Price at Purchase</th>
               <th>Purchase Date</th>
+              <th>Phone Number</th>
+              <th>Address</th>
             </tr>
           </thead>
           <tbody>
@@ -85,6 +87,8 @@ export function AdminDashBoard() {
                 <td>{order.quantity}</td>
                 <td>${order.price_at_purchase}</td>
                 <td>{new Date(order.purchase_date).toLocaleDateString()}</td>
+                <td>{order.phone_number}</td>
+                <td>{order.address}</td>
               </tr>
             ))}
           </tbody>
