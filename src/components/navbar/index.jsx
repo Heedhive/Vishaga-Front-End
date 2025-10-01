@@ -1,24 +1,49 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./navbar.css";
 import { DOMAIN_URL } from "../../constant";
 import logo from "../../page/assest/logo.png";
+import cart from "../../page/assest/cart.png";
 
 export default function Navbar({
   setIsLoggedIn,
   isLoggedIn,
   isAdminLoggedIn,
-  setIsAdminLoggedIn
+  setIsAdminLoggedIn,
 }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    const updateCartCount = () => {
+      try {
+        const cartData = JSON.parse(localStorage.getItem("cart")) || [];
+        setCartCount(cartData.length);
+      } catch (error) {
+        setCartCount(0);
+      }
+    };
+
+    // Listen for a custom event that should be dispatched when the cart is updated elsewhere in the app.
+    // For example: window.dispatchEvent(new CustomEvent('cart-updated'));
+    window.addEventListener("cart-updated", updateCartCount);
+
+    // Set initial count
+    updateCartCount();
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("cart-updated", updateCartCount);
+    };
+  }, []);
 
   const handleLogout = async () => {
     const token = localStorage.getItem("auth_token");
     const response = await fetch(`${DOMAIN_URL}logout`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
     if (response.ok) {
       localStorage.removeItem("auth_token");
@@ -49,10 +74,7 @@ export default function Navbar({
         </div>
 
         {/* Hamburger Icon */}
-        <div
-          className="menu-toggle"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
+        <div className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
           ☰
         </div>
 
@@ -70,7 +92,9 @@ export default function Navbar({
           <li>
             <Link
               to="/products"
-              className={location.pathname === "/products" ? "active-nav-link" : ""}
+              className={
+                location.pathname === "/products" ? "active-nav-link" : ""
+              }
               onClick={() => setMenuOpen(false)}
             >
               Products
@@ -79,7 +103,9 @@ export default function Navbar({
           <li>
             <Link
               to="/gallery"
-              className={location.pathname === "/gallery" ? "active-nav-link" : ""}
+              className={
+                location.pathname === "/gallery" ? "active-nav-link" : ""
+              }
               onClick={() => setMenuOpen(false)}
             >
               Gallery
@@ -88,7 +114,9 @@ export default function Navbar({
           <li>
             <Link
               to="/contact"
-              className={location.pathname === "/contact" ? "active-nav-link" : ""}
+              className={
+                location.pathname === "/contact" ? "active-nav-link" : ""
+              }
               onClick={() => setMenuOpen(false)}
             >
               Contact
@@ -100,13 +128,45 @@ export default function Navbar({
               className={location.pathname === "/cart" ? "active-nav-link" : ""}
               onClick={() => setMenuOpen(false)}
             >
-              Cart
+              <div style={{ position: "relative", display: "inline-block" }}>
+                <img
+                  src={cart}
+                  alt="cart"
+                  width={"24px"}
+                  height={"24px"}
+                  style={{
+                    cursor: "pointer",
+                  }}
+                />
+                {cartCount > 0 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "-12px",
+                      right: "-8px",
+                      borderRadius: "50%",
+                      background: "red",
+                      color: "white",
+                      fontSize: "12px",
+                      width: "20px",
+                      height: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </div>
             </Link>
-          </li>
+          </li>{" "}
           <li>
             <Link
               to="/profile"
-              className={location.pathname === "/profile" ? "active-nav-link" : ""}
+              className={
+                location.pathname === "/profile" ? "active-nav-link" : ""
+              }
               onClick={() => setMenuOpen(false)}
             >
               Profile
@@ -139,7 +199,9 @@ export default function Navbar({
             <li>
               <Link
                 to="/login"
-                className={location.pathname === "/login" ? "active-nav-link" : ""}
+                className={
+                  location.pathname === "/login" ? "active-nav-link" : ""
+                }
                 onClick={() => setMenuOpen(false)}
               >
                 Login

@@ -76,6 +76,7 @@ export function ProductDetails() {
 
     cartData.push(orderData);
     localStorage.setItem("cart", JSON.stringify(cartData));
+    window.dispatchEvent(new CustomEvent('cart-updated'));
     setCart(orderData);
     alert("Added to cart!!");
   };
